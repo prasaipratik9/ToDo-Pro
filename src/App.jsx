@@ -3,7 +3,29 @@ import "./App.css";
 
 // Define a storage key
 const STORAGE_KEY = "todo-pro";
+
+/**
+ * Main Todo App component.
+ */
+/**
+ * Main application component for the Todo Pro app.
+ *
+ * Manages the todo list state, including adding, editing, deleting, filtering,
+ * toggling completion, and persisting tasks to localStorage.
+ *
+ * Features:
+ * - Add, edit, and delete tasks
+ * - Mark tasks as completed or active
+ * - Filter tasks by all, active, or completed
+ * - Clear all completed tasks
+ * - Toggle all tasks as completed or active
+ * - Persist tasks in localStorage
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Todo Pro application UI.
+ */
 function App() {
+  // All useState hooks at the top
   const [todos, setTodos] = useState(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -13,10 +35,11 @@ function App() {
     }
   });
   const [input, setInput] = useState("");
-
-  //state hook for filter
   const [filter, setFilter] = useState("all");
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState("");
 
+  // All functions below
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   }, [todos]);
@@ -25,18 +48,14 @@ function App() {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
   }
 
-  // Handles form submission to add a new todo
   function handleSubmit(e) {
     e.preventDefault();
-
     if (input.trim() === "") return;
-
     const newToDo = { id: Date.now(), text: input.trim(), completed: false };
     setTodos([...todos, newToDo]);
     setInput("");
   }
 
-  // For toggling todo lists as completed or on progress
   function toggleTodo(id) {
     setTodos((prev) =>
       prev.map((todo) =>
@@ -45,40 +64,21 @@ function App() {
     );
   }
 
-  // A new const for managing active, completed, and all tasks
-  const visibleTodos = todos.filter((todo) => {
-    if (filter === "active") return !todo.completed;
-    if (filter === "completed") return todo.completed;
-    return true;
-  });
-
-  //A function with the logic to clear the completed tasks
   function clearCompletedTasks() {
     setTodos((prev) => prev.filter((todo) => !todo.completed));
   }
-
-  //A const which facilitates in when the button should be enabled
-  const hasCompleted = todos.some((todo) => todo.completed);
-
-  //A const for calculating remaining tasks aka remaining todo's
-  const remaining = todos.filter((todo) => !todo.completed).length;
-
-  //Adding editing state
-  const [editingId, setEditingId] = useState(null); //Here, editingId is used to link with the todo id, or simply it is used to catch a specific list id
-  const [editingText, setEditingText] = useState(""); //Here, editingText is used to edit the todo id text, catched previously by editingId
 
   function startEdit(todo) {
     setEditingId(todo.id);
     setEditingText(todo.text);
   }
+
   function saveEdit() {
     const next = editingText.trim();
-    if (next === "") return; // don't commit empty text
-
+    if (next === "") return;
     setTodos((prev) =>
       prev.map((t) => (t.id === editingId ? { ...t, text: next } : t))
     );
-
     setEditingId(null);
     setEditingText("");
   }
@@ -87,12 +87,23 @@ function App() {
     setEditingId(null);
     setEditingText("");
   }
-  const allCompleted = todos.length > 0 && todos.every((t) => t.completed);
 
   function toggleAll() {
     setTodos((prev) => prev.map((t) => ({ ...t, completed: !allCompleted })));
   }
 
+  // Derived values/constants
+  const visibleTodos = todos.filter((todo) => {
+    if (filter === "active") return !todo.completed;
+    if (filter === "completed") return todo.completed;
+    return true;
+  });
+
+  const hasCompleted = todos.some((todo) => todo.completed);
+  const remaining = todos.filter((todo) => !todo.completed).length;
+  const allCompleted = todos.length > 0 && todos.every((t) => t.completed);
+
+  // Return statement
   return (
     <div>
       <div>
