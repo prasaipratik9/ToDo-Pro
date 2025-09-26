@@ -1,12 +1,52 @@
-# React + Vite
+# 📝 Todo Pro (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fully functional **Todo App** built with **React** and **Vite**.  
+The app is complete in terms of logic and functionality — only **UI polish with Tailwind CSS** is left to do.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- ➕ Add new todos (with validation)
+- ❌ Delete todos
+- ✅ Toggle todos completed / active
+- ✏️ Edit tasks inline (with save/cancel and keyboard shortcuts)
+- 🔄 Toggle all todos as completed / active
+- 🗑️ Clear all completed tasks
+- 🎯 Filters: **All / Active / Completed**
+- 📊 Remaining tasks counter
+- 💾 Persistence with LocalStorage (todos survive refresh)
+- ♿ Accessible structure (checkbox + label, keyboard support)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ Tech Stack
+
+- React 18
+- Vite
+- JavaScript (ES6+)
+- LocalStorage API
+- Tailwind CSS (for styling, pending)
+
+---
+
+## 📂 Project Status
+
+✅ Core CRUD logic complete  
+✅ Filters & Remaining count  
+✅ Clear completed + Toggle all  
+✅ LocalStorage persistence  
+✅ Inline editing with save/cancel  
+🟡 Tailwind UI polish next  
+
+---
+
+## 🚀 Getting Started
+
+Clone the repo and run locally:
+
+```bash
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
+npm install
+npm run dev
