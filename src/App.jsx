@@ -103,112 +103,128 @@ function App() {
   const remaining = todos.filter((todo) => !todo.completed).length;
   const allCompleted = todos.length > 0 && todos.every((t) => t.completed);
 
-  // Return statement
+  // Small presentational helpers
+  function FilterButton({ value, label }) {
+    const active = filter === value;
+    return (
+      <button
+        type="button"
+        onClick={() => setFilter(value)}
+        className={
+          active
+            ? "rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow"
+            : "rounded-full px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
+        }
+        aria-pressed={active}
+      >
+        {label}
+      </button>
+    );
+  }
+
   return (
     <div>
       <div>
-        <h1>Todo Pro</h1>
-        <label htmlFor="task">Add tasks:</label>
-        <form onSubmit={handleSubmit}>
-          <input
-            id="task"
-            type="text"
-            aria-label="Add task"
-            value={input}
-            placeholder="Add your tasks..."
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <button type="submit" disabled={input.trim() === ""}>
-            Add
-          </button>
-        </form>
+        <div>
+          <h1>To Do List</h1>
 
-        <button onClick={() => setFilter("all")} disabled={filter === "all"}>
-          All
-        </button>
-        <button
-          onClick={() => setFilter("active")}
-          disabled={filter === "active"}
-        >
-          Active
-        </button>
-        <button
-          onClick={() => setFilter("completed")}
-          disabled={filter === "completed"}
-        >
-          Completed
-        </button>
+          <div>
+            <input
+              type="text"
+              value={input}
+              placeholder="Add new task..."
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+            />
+            <button onClick={handleSubmit} disabled={input.trim() === ""}>
+              Add
+            </button>
+          </div>
+        </div>
 
-        {/* Rendering the completed button which clears tasks that are done */}
-        <button onClick={clearCompletedTasks} disabled={!hasCompleted}>
-          Clear completed
-        </button>
+        <div>
+          {todos.length > 0 && (
+            <div>
+              <span>
+                {remaining === 0
+                  ? "✨ All tasks completed!"
+                  : `${remaining} ${
+                      remaining === 1 ? "task" : "tasks"
+                    } remaining`}
+              </span>
 
-        {/* Toggle all control goes here */}
-        <label>
-          <input
-            type="checkbox"
-            checked={allCompleted}
-            onChange={toggleAll}
-            aria-label="Toggle all tasks"
-          />
-          Mark all {allCompleted ? "active" : "completed"}
-        </label>
-
-        <ul>
-          {visibleTodos.length === 0 ? (
-            <li>No tasks yet</li>
-          ) : (
-            visibleTodos.map((todo) => (
-              <li key={todo.id}>
-                <input
-                  type="checkbox"
-                  id={`todo-${todo.id}`}
-                  checked={todo.completed}
-                  onChange={() => toggleTodo(todo.id)}
-                />
-
-                {editingId === todo.id ? (
-                  // EDIT MODE
-                  <>
-                    <input
-                      value={editingText}
-                      onChange={(e) => setEditingText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") saveEdit();
-                        if (e.key === "Escape") cancelEdit();
-                      }}
-                      aria-label="Edit task"
-                      autoFocus
-                    />
-                    <button
-                      onClick={saveEdit}
-                      disabled={editingText.trim() === ""}
-                    >
-                      Save
-                    </button>
-                    <button onClick={cancelEdit}>Cancel</button>
-                  </>
-                ) : (
-                  // VIEW MODE
-                  <>
-                    <label htmlFor={`todo-${todo.id}`}>{todo.text}</label>
-                    <button onClick={() => startEdit(todo)}>Edit</button>
-                  </>
+              <div>
+                <button onClick={() => setFilter("all")}>All</button>
+                <button onClick={() => setFilter("active")}>Active</button>
+                <button onClick={() => setFilter("completed")}>
+                  Completed
+                </button>
+                {hasCompleted && (
+                  <button onClick={clearCompletedTasks}>Clear completed</button>
                 )}
-
-                <button onClick={() => deleteTodo(todo.id)}>Delete</button>
-              </li>
-            ))
+              </div>
+            </div>
           )}
-        </ul>
 
-        {/* Printing the final outcome, showing the number of tasks left, or basically the final outcome */}
-        <p aria-live="polite">
-          {remaining === 0
-            ? "All done"
-            : `${remaining} task${remaining === 1 ? "" : "s"} remaining`}
-        </p>
+          <div>
+            {todos.length === 0 ? (
+              <div>
+                <div>📝</div>
+                <p>No tasks yet</p>
+                <p>Add one above to get started!</p>
+              </div>
+            ) : (
+              visibleTodos.map((todo) => (
+                <div key={todo.id}>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id={`todo-${todo.id}`}
+                      checked={todo.completed}
+                      onChange={() => toggleTodo(todo.id)}
+                    />
+                    {editingId === todo.id ? (
+                      <div>
+                        <input
+                          value={editingText}
+                          onChange={(e) => setEditingText(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") saveEdit();
+                            if (e.key === "Escape") cancelEdit();
+                          }}
+                          autoFocus
+                        />
+                        <button
+                          onClick={saveEdit}
+                          disabled={editingText.trim() === ""}
+                        >
+                          Save
+                        </button>
+                        <button onClick={cancelEdit}>Cancel</button>
+                      </div>
+                    ) : (
+                      <label htmlFor={`todo-${todo.id}`}>{todo.text}</label>
+                    )}
+                  </div>
+
+                  {editingId !== todo.id && (
+                    <div>
+                      <button onClick={() => startEdit(todo)}>Edit</button>
+                      <button onClick={() => deleteTodo(todo.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
